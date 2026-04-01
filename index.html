@@ -364,6 +364,29 @@
         </div>
     </section>
 
+    <!-- Countdown -->
+<section id="countdown" style="padding:40px 20px;text-align:center;">
+    <h2 style="margin-bottom:20px;font-size:1.4rem;opacity:.85;">Faltan</h2>
+    <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
+        <div style="text-align:center;min-width:60px;">
+            <span id="cd-days" style="display:block;font-size:2.5rem;font-weight:bold;">--</span>
+            <span style="font-size:.8rem;opacity:.7;text-transform:uppercase;letter-spacing:.1em;">Días</span>
+        </div>
+        <div style="text-align:center;min-width:60px;">
+            <span id="cd-hours" style="display:block;font-size:2.5rem;font-weight:bold;">--</span>
+            <span style="font-size:.8rem;opacity:.7;text-transform:uppercase;letter-spacing:.1em;">Horas</span>
+        </div>
+        <div style="text-align:center;min-width:60px;">
+            <span id="cd-minutes" style="display:block;font-size:2.5rem;font-weight:bold;">--</span>
+            <span style="font-size:.8rem;opacity:.7;text-transform:uppercase;letter-spacing:.1em;">Minutos</span>
+        </div>
+        <div style="text-align:center;min-width:60px;">
+            <span id="cd-seconds" style="display:block;font-size:2.5rem;font-weight:bold;">--</span>
+            <span style="font-size:.8rem;opacity:.7;text-transform:uppercase;letter-spacing:.1em;">Segundos</span>
+        </div>
+    </div>
+</section>
+
     <!-- Gallery Section (Placeholder) -->
     <section class="info-section" style="background: #fce4ec;">
         <div class="container">
@@ -520,5 +543,20 @@
         else attachHandler();
     })();
     </script>
+<script>
+(function(){
+    const eventDate = new Date('2026-06-20T17:00:00-06:00');
+    function upd(){
+        const diff = eventDate - new Date();
+        if(diff<=0){const s=document.getElementById('countdown');if(s)s.remove();return;}
+        const el=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=String(v).padStart(2,'0');};
+        el('cd-days',Math.floor(diff/86400000));
+        el('cd-hours',Math.floor((diff%86400000)/3600000));
+        el('cd-minutes',Math.floor((diff%3600000)/60000));
+        el('cd-seconds',Math.floor((diff%60000)/1000));
+    }
+    upd(); setInterval(upd,1000);
+})();
+</script>
 </body>
 </html>
