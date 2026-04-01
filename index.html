@@ -329,24 +329,6 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2 class="info-title">Confirma tu Asistencia</h2>
-            <div class="decorative-line"></div>
-            <p style="margin: 2rem 0; color: #666; font-size: 1.1rem;">
-                Por favor, confirma tu asistencia antes del 10 de junio de 2026
-            </p>
-            <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20confirmo%20mi%20asistencia%20a%20los%20XV%20años" class="cta-button">
-                📱 Confirmar por WhatsApp
-            </a>
-            <p style="margin-top: 2rem; color: #999;">
-                Nancy Socorro Cuevas Gracida<br>
-                Bosque Parral 106-A El Dorado
-            </p>
-        </div>
-    </section>
-
     <!-- Gallery Section (Placeholder) -->
     <section class="info-section" style="background: #fce4ec;">
         <div class="container">
@@ -424,5 +406,52 @@
 
     <script src="js/rsvp-guest.js"></script>
 <script src="js/foro7-footer.js"></script>
+    <script>
+    (function () {
+        const token = new URLSearchParams(window.location.search).get('inv');
+        if (token) return;
+        const SB_URL  = 'https://nzpujmlienzfetqcgsxz.supabase.co';
+        const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56cHVqbWxpZW56ZmV0cWNnc3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2ODYzMzYsImV4cCI6MjA5MDI2MjMzNn0.xl3lsb-KYj5tVLKTnzpbsdEGoV9ySnswH4eyRuyEH1s';
+        const SB_H    = { 'apikey': SB_ANON, 'Authorization': 'Bearer ' + SB_ANON, 'Content-Type': 'application/json' };
+        const SLUG    = 'xv-luz-daniela';
+        const WA_NUMS = ['5214776607212'];
+        const NOMBRE_EVENTO = 'los XV años de Luz Daniela';
+
+        function attachHandler() {
+            const form = document.getElementById('rsvpForm');
+            if (!form) return;
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const nombre  = (document.getElementById('name')?.value || '').trim();
+                const pases   = parseInt(document.getElementById('guests')?.value || '1');
+                const asiste  = document.getElementById('attendance')?.value === 'si';
+                const mensaje = (document.getElementById('message')?.value || '').trim();
+                if (!nombre) return;
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+                try {
+                    const evR = await fetch(`${SB_URL}/rest/v1/eventos?slug=eq.${SLUG}&select=id&limit=1`, { headers: SB_H });
+                    const [ev] = await evR.json();
+                    if (ev?.id) {
+                        await fetch(`${SB_URL}/rest/v1/invitados`, {
+                            method: 'POST',
+                            headers: { ...SB_H, 'Prefer': 'return=minimal' },
+                            body: JSON.stringify({ evento_id: ev.id, nombre, pases_asignados: pases, pases_confirmados: pases, asiste, status: asiste ? 'confirmada' : 'declinada', mensaje: mensaje || null, fecha_confirmacion: new Date().toISOString() })
+                        });
+                    }
+                } catch (err) {}
+                form.style.display = 'none';
+                const succ = document.getElementById('successMessage');
+                if (succ) succ.style.display = 'block';
+                const txt = asiste
+                    ? `Hola, confirmo mi asistencia a ${NOMBRE_EVENTO}.\nNombre: ${nombre}\nPersonas: ${pases}${mensaje ? '\nMensaje: ' + mensaje : ''}`
+                    : `Hola, lamentablemente no podré asistir a ${NOMBRE_EVENTO}.\nNombre: ${nombre}${mensaje ? '\nMensaje: ' + mensaje : ''}`;
+                WA_NUMS.forEach((num, i) => setTimeout(() => window.open(`https://wa.me/${num}?text=${encodeURIComponent(txt)}`, '_blank'), 400 + i * 600));
+            });
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attachHandler);
+        else attachHandler();
+    })();
+    </script>
 </body>
 </html>
