@@ -267,6 +267,12 @@
     </style>
 </head>
 <body>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="audio/invitacion-luz-daniela.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- Hero Section -->
     <section class="hero">
         <h1 class="hero-title">Luz Daniela Moreno Cuevas</h1>
@@ -402,6 +408,25 @@
             Invitación digital creada con ♥ por Foro 7
         </p>
     </footer>
+<!-- Music Toggle Button -->
+<button id="musicToggle" aria-label="Toggle music" style="position:fixed;bottom:20px;right:20px;z-index:9999;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,0.4);color:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;">&#9835;</button>
+
+<script>
+(function(){
+    const audio = document.getElementById('bgMusic');
+    const btn = document.getElementById('musicToggle');
+    let playing = false;
+    btn.addEventListener('click', function(){
+        if(playing){ audio.pause(); btn.style.opacity='0.6'; playing=false; }
+        else { audio.play().catch(()=>{}); btn.style.opacity='1'; playing=true; }
+    });
+    document.addEventListener('click', function startAudio(){
+        if(!playing){ audio.play().then(()=>{ playing=true; btn.style.opacity='1'; }).catch(()=>{}); }
+        document.removeEventListener('click', startAudio);
+    }, {once: true});
+})();
+</script>
+
     <script src="visitas.js?v=1"></script>
 
     <script src="js/rsvp-guest.js"></script>
